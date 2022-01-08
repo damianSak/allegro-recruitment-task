@@ -5,8 +5,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class JsonValidator {
 
-    public boolean isJsonEmpty(String JsonString){
-        return JsonString.equalsIgnoreCase("[]");
+    /**
+     * Validate if JSON is populated with data.
+     * @param jsonString JSON to validate
+     * @return           true if JSON have information inside or false if JSON don't have any information inside
+     */
+
+    public boolean isJsonEmpty(String jsonString){
+        return jsonString.equalsIgnoreCase("[]");
     }
 }
 

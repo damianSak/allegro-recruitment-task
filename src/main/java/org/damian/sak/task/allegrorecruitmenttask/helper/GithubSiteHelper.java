@@ -43,35 +43,51 @@ public class GithubSiteHelper {
         this.messagesService = messagesService;
     }
 
-    private String createURLAddress(String userName) {
-        return ADDRESS_PATH_BEGINNING + userName + ADDRESS_PATH_ENDING;
+    private String createURLAddress(String username) {
+        return ADDRESS_PATH_BEGINNING + username + ADDRESS_PATH_ENDING;
     }
 
-    public List<Repository> findAllRepositories(String userName) throws IOException,
+    /** Method according to given argument is returning list of repositories from GitHub account. It is using
+     * apache http client to communicate with outside server.
+     * @throws UserNotFoundException          if username doesn't exist
+     * @throws RepositoriesNotFoundException  if user doesn't have any public repositories
+     * @throws IOException                    if an input or output exception occurred
+     * @param  username                       account username
+     * @return                                map of programming languages with their ratings
+     * @see                                   HttpGet
+     * @see                                   CloseableHttpResponse
+     */
+    public List<Repository> findAllRepositories(String username) throws IOException,
             UserNotFoundException, RepositoriesNotFoundException {
 
-        HttpGet getRequest = new HttpGet(createURLAddress(userName));
+        HttpGet getRequest = new HttpGet(createURLAddress(username));
         getRequest.addHeader("Content-Type", "application/json");
 
         CloseableHttpResponse response = httpClient.execute(getRequest);
-        logger.info("Executed GET request to Github server for user " + userName);
+        logger.info("Executed GET request to Github server for user: " + username);
         try (response) {
             int statusCode = response.getStatusLine().getStatusCode();
 
             if (statusCode == 404) {
-                logger.warn("Github user " + userName+ " is not existing on the server");
+                logger.warn("Github user: " + username+ " is not existing on the server");
                 throw new UserNotFoundException(messagesService.getMessage(RepositoryMessageConst.USER_NOT_FOUND_EX));
             }
             HttpEntity httpEntity = response.getEntity();
             String jsonString = EntityUtils.toString(httpEntity);
             if (jsonValidator.isJsonEmpty(jsonString)) {
-                logger.warn("No public repositories found on "+ userName + "account");
+                logger.warn("No public repositories found on "+ username + "account");
                 throw new RepositoriesNotFoundException(messagesService.getMessage(RepositoryMessageConst.REPOS_NOT_FOUND_EX));
             }
             return mapJsonToRepositoryList(jsonString);
         }
     }
 
+    /** Method according to given argument is creating list of Repository objects from data carried by JSON. Because
+     * List cant't be directly created from JSON method is using class TypeToken to finding correct Type to understand
+     * List structure correctly.
+     * @param  jsonString   json object
+     * @return              list populated with repository objects
+     */
     private List<Repository> mapJsonToRepositoryList(String jsonString){
         Gson gson = new Gson();
         Type repositoryListType = new TypeToken<ArrayList<Repository>>() {
