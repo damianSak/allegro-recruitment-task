@@ -10,7 +10,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.RepositoriesNotFoundException;
 import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.UserNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.messages.RepositoryMessageConst;
 import org.damian.sak.task.allegrorecruitmenttask.model.Repository;
+import org.damian.sak.task.allegrorecruitmenttask.service.messagesservice.MessagesService;
 import org.damian.sak.task.allegrorecruitmenttask.validators.JsonValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,8 +27,10 @@ public class GithubSiteHelper {
 
     private static final String ADDRESS_PATH_BEGINNING = "https://api.github.com/users/";
     private static final String ADDRESS_PATH_ENDING = "/repos";
+
     private CloseableHttpClient httpClient;
     private JsonValidator jsonValidator;
+    private MessagesService messagesService;
 
     @Autowired
     public GithubSiteHelper(JsonValidator jsonValidator) {
@@ -49,12 +53,12 @@ public class GithubSiteHelper {
         try (response) {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == 404) {
-                throw new UserNotFoundException("GitHub user not found on the server ");
+                throw new UserNotFoundException(messagesService.getMessage(RepositoryMessageConst.USER_NOT_FOUND_EX));
             }
             HttpEntity httpEntity = response.getEntity();
             String jsonString = EntityUtils.toString(httpEntity);
             if (jsonValidator.isJsonEmpty(jsonString)) {
-                throw new RepositoriesNotFoundException("GitHub user found but doesn't have any public repository");
+                throw new RepositoriesNotFoundException(messagesService.getMessage(RepositoryMessageConst.REPOS_NOT_FOUND_EX));
             }
             return mapJsonToRepositoryList(jsonString);
         }
