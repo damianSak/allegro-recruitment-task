@@ -6,6 +6,9 @@ import java.util.Map;
 
 public class MapSorter {
 
+    private MapSorter() {
+    }
+
     public static Map<String, Integer> sortMapByValuesDescending(Map<String, Integer> mapToSort) {
 
         LinkedHashMap<String, Integer> reverseSortedMap = new LinkedHashMap<>();

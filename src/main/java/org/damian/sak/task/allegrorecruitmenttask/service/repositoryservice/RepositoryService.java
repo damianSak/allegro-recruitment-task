@@ -1,4 +1,4 @@
-package org.damian.sak.task.allegrorecruitmenttask.repository;
+package org.damian.sak.task.allegrorecruitmenttask.service.repositoryservice;
 
 import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.RepositoriesNotFoundException;
 import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.UserNotFoundException;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Repository
-public interface RepositoryRepo {
+public interface RepositoryService {
 
     Map<String, Integer> getAllReposWithRatings(String userName) throws UserNotFoundException,
             RepositoriesNotFoundException, IOException;
