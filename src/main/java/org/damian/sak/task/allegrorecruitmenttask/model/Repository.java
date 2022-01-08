@@ -1,5 +1,6 @@
 package org.damian.sak.task.allegrorecruitmenttask.model;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +13,8 @@ import lombok.NoArgsConstructor;
 public class Repository {
 
     private String name;
-    private int rating;
-    private String programmingLanguage;
+    @SerializedName("stargazers_count") private int rating;
+    @SerializedName("language")private String programmingLanguage;
     private int size;
 
 }
