@@ -37,7 +37,7 @@ class RepositoryControllerIntegrationTest {
             };
 
     private String getURL() {
-        return "http://localhost:" + port + "/api";
+        return "http://localhost:" + port + "/githubclient/api";
     }
 
     @Test
