@@ -11,7 +11,7 @@ First option of running:
 
 Second option of running:
 
-Start IDE (InteliJ for example) and then open pom.xml file as a new project, then start server manually from AllegroRecruitmentTaskApplication.class.
+Start IDE (IntelliJ for example) and then open pom.xml file as a new project, then start server manually from AllegroRecruitmentTaskApplication.class.
 
 By default port of the server is set to 8083. If this port is already in use you need to change port to free one in "application.yml" file on the src\main\resources folder and then start again server by one of previously mentioned ways. 
 
