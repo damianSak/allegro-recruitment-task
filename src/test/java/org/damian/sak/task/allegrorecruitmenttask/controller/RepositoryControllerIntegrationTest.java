@@ -1,23 +1,27 @@
 package org.damian.sak.task.allegrorecruitmenttask.controller;
 
 import org.damian.sak.task.allegrorecruitmenttask.AllegroRecruitmentTaskApplication;
-import org.damian.sak.task.allegrorecruitmenttask.model.Repository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.*;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AllegroRecruitmentTaskApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RepositoryControllerIntegrationTest {
+class RepositoryControllerIntegrationTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -25,112 +29,137 @@ public class RepositoryControllerIntegrationTest {
     @LocalServerPort
     private int port;
 
+    private final String USER_NOT_FOUND = "GitHub user not found on the server";
+    private final String NO_REPOSITORY = "GitHub user found but doesn't have any public repository";
+
+    private ParameterizedTypeReference<Map<String, Integer>> responseType =
+            new ParameterizedTypeReference<>() {
+            };
+
     private String getURL() {
         return "http://localhost:" + port + "/api";
     }
 
     @Test
-    void showReposWithRatings_should_returnNotEmptyResponse_when_properUserGiven() {
+    void showReposWithRatings_should_returnNotEmptyMap_when_properUserGiven() {
         //given
         String testUserName = "allegro";
 
         //when
-        ResponseEntity<Repository> response = restTemplate.getForEntity(getURL() + "/repos/"
-                + testUserName, Repository.class);
+        ResponseEntity<Map<String, Integer>> response = restTemplate.exchange(getURL() + "/repos/"
+                + testUserName, HttpMethod.GET, null, responseType);
+
         //then
-        assertNotNull(response.getBody());
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody()).isNotEmpty();
     }
 
     @Test
-    void showReposWithRatings_should_returnNotFoundStatus_when_wrongUserGiven() {
+    void showReposWithRatings_should_returnNotFoundStatusAndMessage_when_wrongUserGiven() {
         //given
-        String testUserName = "gitHubUserThatShouldRatherNotExist";
+        String testUserName = "gitHubUserThatHopefullyShouldRatherNotBeExisting";
 
         //when
-        ResponseEntity<Repository> repositories = restTemplate.getForEntity(getURL() + "/repos/"
-                + testUserName, Repository.class);
+        ResponseEntity<Exception> response = restTemplate.getForEntity(getURL() + "/repos/"
+                + testUserName, Exception.class);
+
         //then
-        assertNotNull(repositories);
-        assertEquals(HttpStatus.NOT_FOUND, repositories.getStatusCode());
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(USER_NOT_FOUND, response.getBody().getMessage());
+
     }
 
     @Test
-    void showReposWithRatings_should_returnOKStatus_when_userWithoutPublicReposGiven() {
+    void showReposWithRatings_should_returnOKStatusAndMessage_when_userWithoutPublicReposGiven() {
         //given
         String testUserName = "allegrooo";
 
         //when
-        ResponseEntity<Repository> repositories = restTemplate.getForEntity(getURL() + "/repos/"
-                + testUserName, Repository.class);
+        ResponseEntity<Exception> response = restTemplate.getForEntity(getURL() + "/repos/"
+                + testUserName, Exception.class);
+
         //then
-        assertNotNull(repositories);
-        assertEquals(HttpStatus.OK, repositories.getStatusCode());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(NO_REPOSITORY, response.getBody().getMessage());
     }
 
     @Test
-    void showTotalReposRating_should_returnNotEmptyResponse_when_properUserGiven() {
+    void showTotalReposRating_should_returnRepositoryRating_when_properUserGiven() {
         //given
         String testUserName = "allegro";
 
         //when
         ResponseEntity<Integer> response = restTemplate.getForEntity(getURL() + "/rating/"
                 + testUserName, Integer.class);
+
         //then
         assertNotNull(response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody().intValue()).isNotNegative();
     }
 
     @Test
-    void showTotalReposRating_should_returnNotFoundStatus_when_wrongUserGiven() {
+    void showTotalReposRating_should_returnNotFoundStatusAndMessage_when_wrongUserGiven() {
         //given
-        String testUserName = "gitHubUserThatShouldRatherNotExist";
+        String testUserName = "gitHubUserThatHopefullyShouldRatherNotBeExisting";
 
         //when
-        ResponseEntity<Integer> repositories = restTemplate.getForEntity(getURL() + "/rating/"
-                + testUserName, Integer.class);
+        ResponseEntity<Exception> response = restTemplate.getForEntity(getURL() + "/rating/"
+                + testUserName, Exception.class);
+
         //then
-        assertNotNull(repositories);
-        assertEquals(HttpStatus.NOT_FOUND, repositories.getStatusCode());
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(USER_NOT_FOUND, response.getBody().getMessage());
     }
 
     @Test
-    void showTotalReposRating_should_returnOKStatus_when_userWithoutPublicReposGiven() {
+    void showTotalReposRating_should_returnOKStatusAndMessage_when_userWithoutPublicReposGiven() {
         //given
         String testUserName = "allegrooo";
 
         //when
-        ResponseEntity<Integer> repositories = restTemplate.getForEntity(getURL() + "/rating/"
-                + testUserName, Integer.class);
+        ResponseEntity<Exception> response = restTemplate.getForEntity(getURL() + "/rating/"
+                + testUserName, Exception.class);
+
         //then
-        assertNotNull(repositories);
-        assertEquals(HttpStatus.OK, repositories.getStatusCode());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(NO_REPOSITORY, response.getBody().getMessage());
+
     }
 
     @Test
-    void showProgrammingLanguageBySize_should_returnNotEmptyResponse_when_properUserGiven() {
+    void showProgrammingLanguageBySize_should_returnNotEmptyMap_when_properUserGiven() {
         //given
         String testUserName = "allegro";
 
         //when
-        ResponseEntity<Repository> response = restTemplate.getForEntity(getURL() + "/languages/"
-                + testUserName, Repository.class);
+        ResponseEntity<Map<String, Integer>> response = restTemplate.exchange(getURL() + "/repos/"
+                + testUserName, HttpMethod.GET, null, responseType);
+
         //then
-        assertNotNull(response.getBody());
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertThat(response.getBody()).isNotEmpty();
     }
 
     @Test
-    void showProgrammingLanguageBySize_should_returnNotFoundStatus_when_wrongUserGiven() {
+    void showProgrammingLanguageBySize_should_returnNotFoundStatusAndMessage_when_wrongUserGiven() {
         //given
-        String testUserName = "gitHubUserThatShouldRatherNotExist";
+        String testUserName = "gitHubUserThatHopefullyShouldRatherNotBeExisting";
 
         //when
-        ResponseEntity<Repository> repositories = restTemplate.getForEntity(getURL() + "/languages/"
-                + testUserName, Repository.class);
+        ResponseEntity<Exception> response = restTemplate.getForEntity(getURL() + "/languages/"
+                + testUserName, Exception.class);
+
         //then
-        assertNotNull(repositories);
-        assertEquals(HttpStatus.NOT_FOUND, repositories.getStatusCode());
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(USER_NOT_FOUND, response.getBody().getMessage());
     }
 
     @Test
@@ -139,10 +168,12 @@ public class RepositoryControllerIntegrationTest {
         String testUserName = "allegrooo";
 
         //when
-        ResponseEntity<Repository> repositories = restTemplate.getForEntity(getURL() + "/languages/"
-                + testUserName, Repository.class);
+        ResponseEntity<Exception> response = restTemplate.getForEntity(getURL() + "/languages/"
+                + testUserName, Exception.class);
+
         //then
-        assertNotNull(repositories);
-        assertEquals(HttpStatus.OK, repositories.getStatusCode());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(NO_REPOSITORY, response.getBody().getMessage());
     }
 }
