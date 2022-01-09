@@ -1,6 +1,5 @@
 package org.damian.sak.task.allegrorecruitmenttask.validators;
 
-import org.damian.sak.task.allegrorecruitmenttask.utils.MapSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -8,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JsonValidator {
 
-    private static final Logger logger = LoggerFactory.getLogger(MapSorter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JsonValidator.class);
 
     /**
      * Validate if JSON is populated with data.
@@ -16,9 +15,8 @@ public class JsonValidator {
      * @param jsonString JSON to validate
      * @return true if JSON have information inside or false if JSON don't have any information inside
      */
-
     public boolean isJsonEmpty(String jsonString){
-        logger.info("Validating response from GitHub server");
+        LOG.info("Validating response from GitHub server");
         return jsonString.equalsIgnoreCase("[]");
     }
 }

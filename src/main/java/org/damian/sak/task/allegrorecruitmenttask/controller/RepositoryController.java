@@ -1,8 +1,8 @@
 package org.damian.sak.task.allegrorecruitmenttask.controller;
 
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.RepositoriesNotFoundException;
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.UserNotFoundException;
-import org.damian.sak.task.allegrorecruitmenttask.service.repositoryservice.RepositoryServiceImplementation;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.RepositoriesNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.UserNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.service.repositoryservice.RepositoryServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,30 +17,28 @@ import java.util.Map;
 @RequestMapping("/api")
 public class RepositoryController {
 
-    private RepositoryServiceImplementation repositoryServiceImplementation;
+    private RepositoryServiceImpl repositoryServiceImpl;
 
-    public RepositoryController(RepositoryServiceImplementation repositoryServiceImplementation) {
-        this.repositoryServiceImplementation = repositoryServiceImplementation;
+    public RepositoryController(RepositoryServiceImpl repositoryServiceImpl) {
+        this.repositoryServiceImpl = repositoryServiceImpl;
     }
 
     @GetMapping("/repos/{username}")
     public ResponseEntity<Map<String, Integer>> showReposWithRatings(@PathVariable String username) throws IOException,
             UserNotFoundException, RepositoriesNotFoundException {
-        return new ResponseEntity<>(repositoryServiceImplementation.getAllReposWithRatings(username), HttpStatus.OK);
+        return new ResponseEntity<>(repositoryServiceImpl.getAllReposWithRatings(username), HttpStatus.OK);
     }
 
     @GetMapping("/rating/{username}")
     public ResponseEntity<Integer> showTotalReposRating(@PathVariable String username) throws IOException,
             UserNotFoundException, RepositoriesNotFoundException {
-        return new ResponseEntity<>(repositoryServiceImplementation.getTotalReposRating(username),HttpStatus.OK);
+        return new ResponseEntity<>(repositoryServiceImpl.getTotalReposRating(username),HttpStatus.OK);
     }
 
     @GetMapping("/languages/{username}")
     public ResponseEntity<Map<String, Integer>> showProgrammingLanguageBySize(@PathVariable String username)
             throws IOException, UserNotFoundException, RepositoriesNotFoundException {
-        return new ResponseEntity<>(repositoryServiceImplementation.getProgrammingLanguageRatingBySize(username),
+        return new ResponseEntity<>(repositoryServiceImpl.getProgrammingLanguageRatingBySize(username),
                 HttpStatus.OK);
     }
-
-
 }

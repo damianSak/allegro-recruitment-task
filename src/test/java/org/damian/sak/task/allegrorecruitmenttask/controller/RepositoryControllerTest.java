@@ -1,9 +1,9 @@
 package org.damian.sak.task.allegrorecruitmenttask.controller;
 
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.RepositoriesNotFoundException;
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.UserNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.RepositoriesNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.UserNotFoundException;
 import org.damian.sak.task.allegrorecruitmenttask.model.Repository;
-import org.damian.sak.task.allegrorecruitmenttask.service.repositoryservice.RepositoryService;
+import org.damian.sak.task.allegrorecruitmenttask.service.repositoryservice.RepositoryServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class RepositoryControllerTest {
     private Map<String, Integer> testMap;
 
     @Mock
-    RepositoryService repositoryServiceMock;
+    RepositoryServiceImpl repositoryServiceImplMock;
 
     @InjectMocks
     RepositoryController testObject;
@@ -47,7 +47,7 @@ class RepositoryControllerTest {
 
     @Test
     void showReposWithRatings_should_returnListOfReposAndRatings_when_userWithPublicReposIsGiven()
-            throws UserNotFoundException, RepositoriesNotFoundException, IOException, URISyntaxException {
+            throws UserNotFoundException, RepositoriesNotFoundException, IOException {
         //given
         String testUsername = "Username";
         testMap.put("first", 1);
@@ -55,7 +55,7 @@ class RepositoryControllerTest {
         testMap.put("third", 3);
         testMap.put("fourth", 4);
 
-        when(repositoryServiceMock.getAllReposWithRatings(testUsername)).thenReturn(testMap);
+        when(repositoryServiceImplMock.getAllReposWithRatings(testUsername)).thenReturn(testMap);
 
         //when
         ResponseEntity<Map<String, Integer>> result = testObject.showReposWithRatings(testUsername);
@@ -69,16 +69,16 @@ class RepositoryControllerTest {
 
     @Test
     void showReposWithRatings_should_throwRepositoriesNotFoundException_when_userWithoutPublicReposIsGiven()
-            throws UserNotFoundException, RepositoriesNotFoundException, IOException, URISyntaxException {
+            throws UserNotFoundException, RepositoriesNotFoundException, IOException {
         //given
         String testUserName = "Username";
         String expectedMessage = "GitHub user found but doesn't have any public repository";
-        when(repositoryServiceMock.getAllReposWithRatings(testUserName)).
+        when(repositoryServiceImplMock.getAllReposWithRatings(testUserName)).
                 thenThrow(new RepositoriesNotFoundException(expectedMessage));
 
         //when
         RepositoriesNotFoundException thrown = Assertions.assertThrows(RepositoriesNotFoundException.class, () -> {
-            repositoryServiceMock.getAllReposWithRatings(testUserName);
+            repositoryServiceImplMock.getAllReposWithRatings(testUserName);
         });
 
         //then
@@ -87,17 +87,16 @@ class RepositoryControllerTest {
 
     @Test
     void showReposWithRatings_should_throwUserNotFoundException_when_wrongUserIsGiven()
-            throws UserNotFoundException, RepositoriesNotFoundException, IOException, URISyntaxException {
+            throws UserNotFoundException, RepositoriesNotFoundException, IOException {
         //given
         String testUserName = "Username";
         String expectedMessage = "GitHub user not found on the server ";
-        when(repositoryServiceMock.getAllReposWithRatings(testUserName)).
+        when(repositoryServiceImplMock.getAllReposWithRatings(testUserName)).
                 thenThrow(new RepositoriesNotFoundException(expectedMessage));
 
         //when
-        RepositoriesNotFoundException thrown = Assertions.assertThrows(RepositoriesNotFoundException.class, () -> {
-            repositoryServiceMock.getAllReposWithRatings(testUserName);
-        });
+        RepositoriesNotFoundException thrown = Assertions.assertThrows(RepositoriesNotFoundException.class, () ->
+                repositoryServiceImplMock.getAllReposWithRatings(testUserName));
 
         //then
         Assertions.assertEquals(expectedMessage, thrown.getMessage());
@@ -105,13 +104,14 @@ class RepositoryControllerTest {
 
     @Test
     void showTotalRating_should_returnListOfReposAndRatings_when_userWithPublicReposIsGiven()
-            throws UserNotFoundException, RepositoriesNotFoundException, IOException, URISyntaxException {
+            throws UserNotFoundException, RepositoriesNotFoundException, IOException {
         //given
         String testUsername = "Username";
         int testResult = 10;
 
-        when(repositoryServiceMock.getTotalReposRating(testUsername)).thenReturn(testResult);
+        when(repositoryServiceImplMock.getTotalReposRating(testUsername)).thenReturn(testResult);
         //when
+
         ResponseEntity<Integer> result = testObject.showTotalReposRating(testUsername);
         //then
         assertThat(result.getStatusCodeValue()).isEqualTo(200);
@@ -124,12 +124,12 @@ class RepositoryControllerTest {
         //given
         String testUsername = "Username";
         String expectedMessage = "GitHub user found but doesn't have any public repository";
-        when(repositoryServiceMock.getAllReposWithRatings(testUsername)).
+        when(repositoryServiceImplMock.getAllReposWithRatings(testUsername)).
                 thenThrow(new RepositoriesNotFoundException(expectedMessage));
 
         //when
         RepositoriesNotFoundException thrown = Assertions.assertThrows(RepositoriesNotFoundException.class, () -> {
-            repositoryServiceMock.getAllReposWithRatings(testUsername);
+            repositoryServiceImplMock.getAllReposWithRatings(testUsername);
         });
 
         //then
@@ -142,12 +142,12 @@ class RepositoryControllerTest {
         //given
         String testUserName = "Username";
         String expectedMessage = "GitHub user not found on the server ";
-        when(repositoryServiceMock.getAllReposWithRatings(testUserName)).
+        when(repositoryServiceImplMock.getAllReposWithRatings(testUserName)).
                 thenThrow(new RepositoriesNotFoundException(expectedMessage));
 
         //when
         RepositoriesNotFoundException thrown = Assertions.assertThrows(RepositoriesNotFoundException.class, () -> {
-            repositoryServiceMock.getAllReposWithRatings(testUserName);
+            repositoryServiceImplMock.getAllReposWithRatings(testUserName);
         });
 
         //then
@@ -165,7 +165,7 @@ class RepositoryControllerTest {
         testMap.put("Python", 300);
         testMap.put("TypeScript", 400);
 
-        when(repositoryServiceMock.getProgrammingLanguageRatingBySize(testUsername)).thenReturn(testMap);
+        when(repositoryServiceImplMock.getProgrammingLanguageRatingBySize(testUsername)).thenReturn(testMap);
         //when
         ResponseEntity<Map<String, Integer>> result = testObject.showProgrammingLanguageBySize(testUsername);
         //then
@@ -180,12 +180,12 @@ class RepositoryControllerTest {
         //given
         String testUsername = "Username";
         String expectedMessage = "GitHub user found but doesn't have any public repository";
-        when(repositoryServiceMock.getAllReposWithRatings(testUsername)).
+        when(repositoryServiceImplMock.getAllReposWithRatings(testUsername)).
                 thenThrow(new RepositoriesNotFoundException(expectedMessage));
 
         //when
         RepositoriesNotFoundException thrown = Assertions.assertThrows(RepositoriesNotFoundException.class, () -> {
-            repositoryServiceMock.getAllReposWithRatings(testUsername);
+            repositoryServiceImplMock.getAllReposWithRatings(testUsername);
         });
 
         //then
@@ -198,12 +198,12 @@ class RepositoryControllerTest {
         //given
         String testUserName = "Username";
         String expectedMessage = "GitHub user not found on the server ";
-        when(repositoryServiceMock.getAllReposWithRatings(testUserName)).
+        when(repositoryServiceImplMock.getAllReposWithRatings(testUserName)).
                 thenThrow(new RepositoriesNotFoundException(expectedMessage));
 
         //when
         RepositoriesNotFoundException thrown = Assertions.assertThrows(RepositoriesNotFoundException.class, () -> {
-            repositoryServiceMock.getAllReposWithRatings(testUserName);
+            repositoryServiceImplMock.getAllReposWithRatings(testUserName);
         });
 
         //then

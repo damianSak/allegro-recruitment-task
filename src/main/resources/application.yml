@@ -1,2 +1,8 @@
 server:
   port: ${port:8083}
+  servlet:
+    context-path: /githubclient/
+
+spring:
+  application:
+    name: AllegroRecruitmentTask

@@ -1,7 +1,7 @@
 package org.damian.sak.task.allegrorecruitmenttask.exception;
 
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.RepositoriesNotFoundException;
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.UserNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.RepositoriesNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

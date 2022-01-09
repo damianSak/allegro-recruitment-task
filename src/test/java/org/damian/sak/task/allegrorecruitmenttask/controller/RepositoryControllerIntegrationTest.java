@@ -29,8 +29,8 @@ class RepositoryControllerIntegrationTest {
     @LocalServerPort
     private int port;
 
-    private final String USER_NOT_FOUND = "GitHub user not found on the server";
-    private final String NO_REPOSITORY = "GitHub user found but doesn't have any public repository";
+    private final String EXPECTED_USER_NOT_FOUND_MSG = "GitHub user not found on the server";
+    private final String EXPECTED_NO_REPOSITORY_MSG = "GitHub user found but doesn't have any public repository";
 
     private ParameterizedTypeReference<Map<String, Integer>> responseType =
             new ParameterizedTypeReference<>() {
@@ -67,7 +67,7 @@ class RepositoryControllerIntegrationTest {
         //then
         assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(USER_NOT_FOUND, response.getBody().getMessage());
+        assertEquals(EXPECTED_USER_NOT_FOUND_MSG, response.getBody().getMessage());
 
     }
 
@@ -83,7 +83,7 @@ class RepositoryControllerIntegrationTest {
         //then
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(NO_REPOSITORY, response.getBody().getMessage());
+        assertEquals(EXPECTED_NO_REPOSITORY_MSG, response.getBody().getMessage());
     }
 
     @Test
@@ -113,7 +113,7 @@ class RepositoryControllerIntegrationTest {
         //then
         assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(USER_NOT_FOUND, response.getBody().getMessage());
+        assertEquals(EXPECTED_USER_NOT_FOUND_MSG, response.getBody().getMessage());
     }
 
     @Test
@@ -128,7 +128,7 @@ class RepositoryControllerIntegrationTest {
         //then
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(NO_REPOSITORY, response.getBody().getMessage());
+        assertEquals(EXPECTED_NO_REPOSITORY_MSG, response.getBody().getMessage());
 
     }
 
@@ -159,7 +159,7 @@ class RepositoryControllerIntegrationTest {
         //then
         assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(USER_NOT_FOUND, response.getBody().getMessage());
+        assertEquals(EXPECTED_USER_NOT_FOUND_MSG, response.getBody().getMessage());
     }
 
     @Test
@@ -174,6 +174,6 @@ class RepositoryControllerIntegrationTest {
         //then
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(NO_REPOSITORY, response.getBody().getMessage());
+        assertEquals(EXPECTED_NO_REPOSITORY_MSG, response.getBody().getMessage());
     }
 }

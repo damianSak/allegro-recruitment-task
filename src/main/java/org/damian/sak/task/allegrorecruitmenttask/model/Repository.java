@@ -13,8 +13,12 @@ import lombok.NoArgsConstructor;
 public class Repository {
 
     private String name;
-    @SerializedName("stargazers_count") private int rating;
-    @SerializedName("language")private String programmingLanguage;
-    private int size;
 
+    @SerializedName("stargazers_count")
+    private int rating;
+
+    @SerializedName("language")
+    private String programmingLanguage;
+
+    private int size;
 }

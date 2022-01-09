@@ -1,0 +1,1 @@
+cls && cd target/ && java -jar allegro-recruitment-task-0.0.1-SNAPSHOT.jar

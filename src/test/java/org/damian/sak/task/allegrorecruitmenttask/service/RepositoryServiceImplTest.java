@@ -1,10 +1,10 @@
 package org.damian.sak.task.allegrorecruitmenttask.service;
 
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.RepositoriesNotFoundException;
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.UserNotFoundException;
-import org.damian.sak.task.allegrorecruitmenttask.helper.GitHubSiteHelper;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.RepositoriesNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.UserNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.helper.GitHubSiteClient;
 import org.damian.sak.task.allegrorecruitmenttask.model.Repository;
-import org.damian.sak.task.allegrorecruitmenttask.service.repositoryservice.RepositoryServiceImplementation;
+import org.damian.sak.task.allegrorecruitmenttask.service.repositoryservice.RepositoryServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,16 +21,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class RepositoryServiceImplementationTest {
+class RepositoryServiceImplTest {
 
     private List<Repository> repoList;
     private String testUsername;
 
     @Mock
-    private GitHubSiteHelper gitHubSiteHelperMock;
+    private GitHubSiteClient gitHubSiteClientMock;
 
     @InjectMocks
-    RepositoryServiceImplementation testObject;
+    RepositoryServiceImpl testObject;
 
     @BeforeEach
     void initialize() {
@@ -40,25 +40,24 @@ class RepositoryServiceImplementationTest {
         repoList.add(Repository.builder().name("second").rating(2).programmingLanguage("Java").size(200).build());
         repoList.add(Repository.builder().name("third").rating(3).programmingLanguage("Python").size(300).build());
         repoList.add(Repository.builder().name("fourth").rating(4).programmingLanguage("TypeScript").size(400).build());
-        repoList.add(Repository.builder().name("fifth").rating(5).programmingLanguage("Java").size(500).build());
     }
 
     @Test
     void getAllReposWithRatings_should_returnReposAndRatingInOrder_when_properListGiven() throws
             UserNotFoundException, IOException, RepositoriesNotFoundException {
         //given
-        when(gitHubSiteHelperMock.findAllRepositories(testUsername)).thenReturn(repoList);
+        when(gitHubSiteClientMock.findAllRepositories(testUsername)).thenReturn(repoList);
 
         //when
         Map<String, Integer> testMap = testObject.getAllReposWithRatings(testUsername);
 
         //then
         assertThat(testMap.containsValue(200)).isFalse();
-        assertThat(testMap.entrySet().size()).isEqualTo(5);
-        assertThat(testMap.keySet().toArray()[0]).isEqualTo("fifth");
-        assertThat(testMap.values().toArray()[0]).isEqualTo(5);
-        assertThat(testMap.keySet().toArray()[4]).isEqualTo("first");
-        assertThat(testMap.values().toArray()[4]).isEqualTo(1);
+        assertThat(testMap.entrySet().size()).isEqualTo(4);
+        assertThat(testMap.keySet().toArray()[0]).isEqualTo("fourth");
+        assertThat(testMap.values().toArray()[0]).isEqualTo(4);
+        assertThat(testMap.keySet().toArray()[3]).isEqualTo("first");
+        assertThat(testMap.values().toArray()[3]).isEqualTo(1);
     }
 
     @Test
@@ -66,7 +65,7 @@ class RepositoryServiceImplementationTest {
             UserNotFoundException, IOException, RepositoriesNotFoundException {
         //given
         repoList.clear();
-        when(gitHubSiteHelperMock.findAllRepositories(testUsername)).thenReturn(repoList);
+        when(gitHubSiteClientMock.findAllRepositories(testUsername)).thenReturn(repoList);
 
         //when
         Map<String, Integer> testMap = testObject.getAllReposWithRatings(testUsername);
@@ -79,13 +78,13 @@ class RepositoryServiceImplementationTest {
     void getTotalReposRating_should_returnTotalRating_when_properListGiven() throws
             UserNotFoundException, IOException, RepositoriesNotFoundException {
         //given
-        when(gitHubSiteHelperMock.findAllRepositories(testUsername)).thenReturn(repoList);
+        when(gitHubSiteClientMock.findAllRepositories(testUsername)).thenReturn(repoList);
 
         //when
         int testRating = testObject.getTotalReposRating(testUsername);
 
         //then
-        assertThat(testRating).isEqualTo(15);
+        assertThat(testRating).isEqualTo(10);
     }
 
     @Test
@@ -93,7 +92,7 @@ class RepositoryServiceImplementationTest {
             UserNotFoundException, IOException, RepositoriesNotFoundException {
         //given
         repoList.clear();
-        when(gitHubSiteHelperMock.findAllRepositories(testUsername)).thenReturn(repoList);
+        when(gitHubSiteClientMock.findAllRepositories(testUsername)).thenReturn(repoList);
 
         //when
         int testRating = testObject.getTotalReposRating(testUsername);
@@ -106,14 +105,14 @@ class RepositoryServiceImplementationTest {
     void getProgrammingLanguageRatingBySize_should_returnLanguageRatingInOrder_when_properListGiven() throws
             UserNotFoundException, IOException, RepositoriesNotFoundException {
         //given
-        when(gitHubSiteHelperMock.findAllRepositories(testUsername)).thenReturn(repoList);
+        when(gitHubSiteClientMock.findAllRepositories(testUsername)).thenReturn(repoList);
 
         //when
         Map<String, Integer> testMap = testObject.getProgrammingLanguageRatingBySize(testUsername);
 
         //then
-        assertThat(testMap.keySet().toArray()[0]).isEqualTo("Java");
-        assertThat(testMap.values().toArray()[0]).isEqualTo(800);
+      assertThat(testMap.keySet().toArray()[0]).isEqualTo("TypeScript");
+       assertThat(testMap.values().toArray()[0]).isEqualTo(400);
         assertThat(testMap.keySet().toArray()[2]).isEqualTo("Python");
         assertThat(testMap.values().toArray()[2]).isEqualTo(300);
         assertThat(testMap.entrySet().size()).isEqualTo(3);
@@ -124,7 +123,7 @@ class RepositoryServiceImplementationTest {
             UserNotFoundException, IOException, RepositoriesNotFoundException {
         //given
         repoList.clear();
-        when(gitHubSiteHelperMock.findAllRepositories(testUsername)).thenReturn(repoList);
+        when(gitHubSiteClientMock.findAllRepositories(testUsername)).thenReturn(repoList);
 
         //when
         Map<String, Integer> testMap = testObject.getProgrammingLanguageRatingBySize(testUsername);
@@ -139,7 +138,7 @@ class RepositoryServiceImplementationTest {
         //given
         repoList.clear();
         repoList.add(Repository.builder().name("second").rating(2).programmingLanguage(null).size(200).build());
-        when(gitHubSiteHelperMock.findAllRepositories(testUsername)).thenReturn(repoList);
+        when(gitHubSiteClientMock.findAllRepositories(testUsername)).thenReturn(repoList);
 
         //when
         Map<String, Integer> testMap = testObject.getProgrammingLanguageRatingBySize(testUsername);
@@ -155,14 +154,14 @@ class RepositoryServiceImplementationTest {
             UserNotFoundException, IOException, RepositoriesNotFoundException {
         //given
         repoList.add(Repository.builder().name("sixth").rating(6).programmingLanguage(null).size(600).build());
-        when(gitHubSiteHelperMock.findAllRepositories(testUsername)).thenReturn(repoList);
+        when(gitHubSiteClientMock.findAllRepositories(testUsername)).thenReturn(repoList);
 
         //when
         Map<String, Integer> testMap = testObject.getProgrammingLanguageRatingBySize(testUsername);
 
         //then
-        assertThat(testMap.keySet().toArray()[0]).isEqualTo("Java");
-        assertThat(testMap.values().toArray()[0]).isEqualTo(800);
+        assertThat(testMap.keySet().toArray()[0]).isEqualTo("TypeScript");
+        assertThat(testMap.values().toArray()[0]).isEqualTo(400);
         assertThat(testMap.keySet().toArray()[2]).isEqualTo("Python");
         assertThat(testMap.values().toArray()[2]).isEqualTo(300);
         assertThat(testMap.containsKey("null")).isFalse();

@@ -1,14 +1,12 @@
 package org.damian.sak.task.allegrorecruitmenttask.service.repositoryservice;
 
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.RepositoriesNotFoundException;
-import org.damian.sak.task.allegrorecruitmenttask.exception.custom_exception.UserNotFoundException;
-import org.springframework.stereotype.Repository;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.RepositoriesNotFoundException;
+import org.damian.sak.task.allegrorecruitmenttask.exception.custom.UserNotFoundException;
 
 import java.io.IOException;
 import java.util.Map;
 
-@Repository
-public interface RepositoryServiceInterface {
+public interface RepositoryService {
 
     /**
      * Method according to given argument is returning a map of repositories with their ratings in descending order.
